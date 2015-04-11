@@ -48,23 +48,12 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        //super.addResourceHandlers(registry);
-        
         logger.info("Mapping du dossier {} à {}", PODCAST_LOCATION_RESOURCE_HANDLER, podcastServerParameters.rootFolderWithProtocol());
         
         registry
                 .addResourceHandler(PODCAST_LOCATION_RESOURCE_HANDLER)
                 .addResourceLocations(podcastServerParameters.rootFolderWithProtocol())
                 .setCachePeriod(0);
-        
-        /*
-        registry.addResourceHandler("/css/**").addResourceLocations("/app/css/").setCachePeriod(CACHE_PERIOD);
-        registry.addResourceHandler("/img/**").addResourceLocations("/app/img/").setCachePeriod(CACHE_PERIOD);
-        registry.addResourceHandler("/js/**").addResourceLocations("/app/js/").setCachePeriod(CACHE_PERIOD);
-        registry.addResourceHandler("/font/**").addResourceLocations("/app/font/").setCachePeriod(CACHE_PERIOD);
-        registry.addResourceHandler("/html/**").addResourceLocations("/app/html/").setCachePeriod(CACHE_PERIOD);
-        registry.addResourceHandler("/less/**").addResourceLocations("/app/less/").setCachePeriod(CACHE_PERIOD);
-        */
     }
 
     /**

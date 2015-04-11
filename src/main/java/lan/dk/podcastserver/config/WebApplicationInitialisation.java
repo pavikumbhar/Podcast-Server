@@ -1,3 +1,4 @@
+/*
 package lan.dk.podcastserver.config;
 
 import org.h2.server.web.WebServlet;
@@ -8,10 +9,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+*/
 /**
  * Class permettant d'initier la configuration de globale de l'application.
  * Cette classe se substitue au Web.xml.
- */
+ *//*
+
 
 @Order(1)
 public class WebApplicationInitialisation extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -31,10 +34,12 @@ public class WebApplicationInitialisation extends AbstractAnnotationConfigDispat
         return new String[]{"/"};
     }
 
-    /**
+    */
+/**
      * @param servletContext
      * @throws javax.servlet.ServletException
-     */
+     *//*
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
 
@@ -45,9 +50,10 @@ public class WebApplicationInitialisation extends AbstractAnnotationConfigDispat
 
         ServletRegistration.Dynamic h2Servlet = servletContext.addServlet("h2console", WebServlet.class);
         h2Servlet.setLoadOnStartup(2);
-        h2Servlet.addMapping("/console/database/*");
+        h2Servlet.addMapping("/console/database*/
+/*");
 
 
         super.onStartup(servletContext);
     }
-}
+}*/
