@@ -1,0 +1,35 @@
+##############################
+# Database and Lucene Config #
+##############################
+
+spring :
+    datasource:
+        url: jdbc:h2:tcp://localhost:9999/~/Library/H2Database/beinsport
+        username: sa
+        driver-class-name: org.h2.Driver
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        show-sql: false
+        hibernate.ddl-auto: update
+        hibernate.search.default.indexmanager: near-real-time
+        hibernate.search.default.directory_provider: ram
+        hibernate.search.default.indexBase: /tmp/lucene
+
+
+##############################
+#    Application Specific    #
+##############################
+
+podcastserver:
+    rootfolder: /Users/kevin/Tomcat/podcast/
+    #concurrentDownload: 2
+    #maxUpdateParallels: 3
+    numberofdaytodownload: 1
+    serverURL: http://192.168.1.203:8080
+    fileContainer: ${podcastserver.serverURL}/podcast
+    updateAndDownload:
+        refresh:
+            cron: 0 0 0 * * ?
+    externaltools:
+        #rtmpdump: /usr/local/bin/rtmpdump
+        #ffmpeg: /usr/bin/ffmpeg
