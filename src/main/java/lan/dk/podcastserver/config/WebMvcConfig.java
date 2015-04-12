@@ -21,9 +21,8 @@ import java.util.List;
  * Configuration de la partie Web MVC de l'application
  * Plus d'informations sur le configuration Java-Config de Spring MVC : http://www.luckyryan.com/2013/02/07/migrate-spring-mvc-servlet-xml-to-java-config/
  */
-@EnableWebMvc
-@ComponentScan("lan.dk.podcastserver.controller")
 @Configuration
+@ComponentScan("lan.dk.podcastserver.controller")
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Resource PodcastServerParameters podcastServerParameters;
@@ -43,8 +42,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         
         registry
                 .addResourceHandler(PODCAST_LOCATION_RESOURCE_HANDLER)
-                .addResourceLocations(podcastServerParameters.rootFolderWithProtocol())
-                .setCachePeriod(CACHE_PERIOD);
+                    .addResourceLocations(podcastServerParameters.rootFolderWithProtocol())
+                    .setCachePeriod(CACHE_PERIOD);
     }
 
     @Bean

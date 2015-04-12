@@ -10,11 +10,13 @@ spring :
     jpa:
         database-platform: org.hibernate.dialect.H2Dialect
         show-sql: false
-        hibernate.ddl-auto: update
-        hibernate.search.default.indexmanager: near-real-time
-        hibernate.search.default.directory_provider: ram
-        hibernate.search.default.indexBase: /tmp/lucene
-
+        hibernate :
+            ddl-auto: update
+        properties :
+            hibernate.search.default:
+                        indexmanager: near-real-time
+                        directory_provider: ram
+                        indexBase: /tmp/lucene
 
 ##############################
 #    Application Specific    #
@@ -22,14 +24,33 @@ spring :
 
 podcastserver:
     rootfolder: /Users/kevin/Tomcat/podcast/
-    #concurrentDownload: 2
-    #maxUpdateParallels: 3
-    numberofdaytodownload: 1
-    serverURL: http://192.168.1.203:8080
-    fileContainer: ${podcastserver.serverURL}/podcast
-    updateAndDownload:
+    #concurrent-download: 2
+    #max-update-parallels: 3
+    #cover-default-name: cover
+    number-of-day-to-download: 1
+    #number-of-try: 10
+    #server-url: http://192.168.1.203:8080
+    #file-container: ${podcastserver.server-url}/podcast
+    #download-extention: .psdownload
+    #rss-default-number-item: 50
+    updateandDownload:
         refresh:
             cron: 0 0 0 * * ?
     externaltools:
         #rtmpdump: /usr/local/bin/rtmpdump
         #ffmpeg: /usr/bin/ffmpeg
+
+
+##############################
+#          Actuator          #
+##############################
+
+management:
+    context-path: /system
+
+endpoints:
+    health:
+        sensitive : false
+
+logging:
+    path: /private/tmp/logs/podcastserver.log
