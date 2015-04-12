@@ -54,10 +54,3 @@ endpoints:
 
 logging:
     path: /private/tmp/logs/podcastserver.log
-
-##############################
-#           Server           #
-##############################
-
-server:
-    port : 8180

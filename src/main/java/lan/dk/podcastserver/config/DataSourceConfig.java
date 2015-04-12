@@ -18,7 +18,7 @@ import java.sql.SQLException;
 @Configuration
 class DataSourceConfig {
 
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.username:}")
     private String user;
 
     @Value("${spring.datasource.password:}")
