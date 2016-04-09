@@ -23,6 +23,11 @@ spring :
               usertype:
                 autoRegisterUserTypes: true
 
+server:
+  compression:
+    enabled : true
+    mime-types : application/json,application/xml,text/html,text/xml,text/plain
+
 ##############################
 #    Application Specific    #
 ##############################
@@ -41,6 +46,10 @@ podcastserver:
     update-and-download:
         refresh:
             cron: 0 0 0 * * ?
+    backup :
+        location: /tmp/
+        cron: 0 30 4 * * ?
+        binary: false
     externaltools:
         #rtmpdump: /usr/local/bin/rtmpdump
         #ffmpeg: /usr/bin/ffmpeg
