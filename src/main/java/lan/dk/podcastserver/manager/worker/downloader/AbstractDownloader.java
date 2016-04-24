@@ -154,7 +154,7 @@ public abstract class AbstractDownloader implements Runnable, Downloader {
     }
 
     @Transactional
-    protected void saveSyncWithPodcast() {
+    void saveSyncWithPodcast() {
         try {
             item.setPodcast(podcastRepository.findOne(item.getPodcast().getId()));
             itemRepository.save(item);
@@ -168,7 +168,7 @@ public abstract class AbstractDownloader implements Runnable, Downloader {
         template.convertAndSend(WS_TOPIC_DOWNLOAD, item);
         template.convertAndSend(String.format(WS_TOPIC_PODCAST, item.getPodcast().getId()), item);
 
-        itemDownloadManager.getDownloadings$().onNext(item);
+        itemDownloadManager.sendProgression(item);
     }
 
     public String getItemUrl(Item item) {

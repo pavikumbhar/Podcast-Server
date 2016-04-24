@@ -294,6 +294,10 @@ public class ItemDownloadManager {
 
         convertAndSendWaitingQueue();
     }
+
+    public void sendProgression(Item item){
+        this.downloadings$.onNext(item);
+    }
     
     @PostConstruct
     public void postConstruct() throws URISyntaxException {

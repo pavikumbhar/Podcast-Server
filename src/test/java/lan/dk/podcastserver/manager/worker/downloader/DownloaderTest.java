@@ -40,8 +40,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class DownloaderTest {
 
-    public static final String ROOT_FOLDER = "/tmp/";
-    public static final String TEMPORARY_EXTENSION = ".psdownload";
+    static final String ROOT_FOLDER = "/tmp/";
+    static final String TEMPORARY_EXTENSION = ".psdownload";
 
     @Mock PodcastRepository podcastRepository;
     @Mock ItemRepository itemRepository;

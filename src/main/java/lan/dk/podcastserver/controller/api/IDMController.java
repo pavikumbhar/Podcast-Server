@@ -52,7 +52,7 @@ public class IDMController {
         Action1<Item> publisher = publish(sseEmitter);
 
         Subscription subscribe = IDM.getDownloadings$()
-                .subscribe( publisher, sseEmitter::completeWithError, sseEmitter::complete);
+                .subscribe(publisher, sseEmitter::completeWithError, sseEmitter::complete);
 
         sseEmitter.onTimeout(subscribe::unsubscribe);
 
