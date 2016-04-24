@@ -3,12 +3,19 @@ package lan.dk.podcastserver.controller.api;
 import lan.dk.podcastserver.entity.Item;
 import lan.dk.podcastserver.manager.ItemDownloadManager;
 import lan.dk.podcastserver.utils.form.MovingItemInQueueForm;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import rx.Subscription;
+import rx.functions.Action1;
 
+import java.io.IOException;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -16,12 +23,15 @@ import java.util.UUID;
 /**
  * Created by kevin on 26/12/2013.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/task/downloadManager")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class IDMController {
 
-    @Autowired
-    ItemDownloadManager IDM;
+    private static final Long A_DAY = 1000 * 60 * 60 * 24L;
+
+    private final ItemDownloadManager IDM;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -30,9 +40,27 @@ public class IDMController {
         return IDM.getWaitingQueue();
     }
 
-    @RequestMapping(value="/downloading", method = RequestMethod.GET)
-    public Set<Item> getDownloadingList () {
+    @RequestMapping(value="/downloading/list", method = RequestMethod.GET)
+    public Set<Item> currentlyDownloading() {
         return IDM.getDownloadingQueue().keySet();
+    }
+
+    @RequestMapping(value="/downloading", method = RequestMethod.GET)
+    public SseEmitter getDownloadingList () {
+        final SseEmitter sseEmitter = new SseEmitter(A_DAY);
+
+        Action1<Item> publisher = publish(sseEmitter);
+
+        Subscription subscribe = IDM.getDownloadings$()
+                .subscribe( publisher, sseEmitter::completeWithError, sseEmitter::complete);
+
+        sseEmitter.onTimeout(subscribe::unsubscribe);
+
+        return sseEmitter;
+    }
+
+    private <U> Action1<U> publish(SseEmitter sseEmitter) {
+        return v -> { try { sseEmitter.send(v, MediaType.APPLICATION_JSON); } catch (IOException ignored) {} };
     }
 
     @RequestMapping(value="/downloading/{id}", method = RequestMethod.GET)

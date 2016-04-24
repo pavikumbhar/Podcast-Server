@@ -35,7 +35,7 @@ export default class DownloadCtrl {
         this.DonwloadManager.getNumberOfSimDl().then(v => { this.numberOfSimDl = parseInt(v); });
 
         /** Websocket Connection */
-        this.DonwloadManager
+        /*this.DonwloadManager
             .ngstomp
                 .subscribeTo('/app/download').withBodyInJson().bindTo(this.$scope)
                 .callback(m => this.items = m.body)
@@ -48,10 +48,19 @@ export default class DownloadCtrl {
             .and()
                 .subscribeTo('/topic/waiting').withBodyInJson().bindTo(this.$scope)
                 .callback(m => this.waitingitems = m.body)
-            .connect();
+            .connect();*/
+
+        this.downloadingSub = this.DonwloadManager
+            .downloading$.subscribe(m => this.$scope.$evalAsync(() => this.onDownloadUpdate(m)));
+    }
+
+    $onDestroy() {
+        console.log('Destroy');
+        this.downloadingSub.dispose();
     }
 
     onDownloadUpdate(item) {
+        console.log(item);
         let elemToUpdate = this.items.find(i => i.id === item.id);
         switch (item.status) {
             case 'STARTED' :

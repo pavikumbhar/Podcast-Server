@@ -44,6 +44,8 @@ System.config({
     "ng-file-upload": "github:danialfarid/ng-file-upload@9.1.2",
     "ng-tags-input": "github:mbenford/ngTagsInput@3.0.0",
     "ngstorage": "github:gsklee/ngStorage@0.3.10",
+    "rx": "npm:rx@4.1.0",
+    "rx-dom": "npm:rx-dom@7.0.3",
     "sockjs-client": "github:sockjs/sockjs-client@0.3.4",
     "text": "github:systemjs/plugin-text@0.0.2",
     "videogular": "github:videogular/bower-videogular@1.4.3",
@@ -131,7 +133,6 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:assert@1.3.0": {
-      "systemjs-json": "github:systemjs/plugin-json@0.1.0",
       "util": "npm:util@0.10.3"
     },
     "npm:babel-runtime@5.8.38": {
@@ -210,6 +211,13 @@ System.config({
       "stream-browserify": "npm:stream-browserify@1.0.0",
       "string_decoder": "npm:string_decoder@0.10.31"
     },
+    "npm:rx-dom@7.0.3": {
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "rx": "npm:rx@4.1.0"
+    },
+    "npm:rx@4.1.0": {
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
     "npm:source-map@0.4.4": {
       "amdefine": "npm:amdefine@1.0.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
@@ -230,8 +238,7 @@ System.config({
     },
     "npm:util@0.10.3": {
       "inherits": "npm:inherits@2.0.1",
-      "process": "github:jspm/nodelibs-process@0.1.2",
-      "systemjs-json": "github:systemjs/plugin-json@0.1.0"
+      "process": "github:jspm/nodelibs-process@0.1.2"
     }
   }
 });

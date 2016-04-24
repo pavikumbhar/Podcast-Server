@@ -1,5 +1,6 @@
 import {Module, Service} from '../../../decorators';
 import AngularStompDKConfig from '../../../config/ngstomp';
+import Rx from 'rx-dom';
 
 @Module({
     name : 'ps.common.service.data.downloadManager',
@@ -9,11 +10,15 @@ import AngularStompDKConfig from '../../../config/ngstomp';
 export default class DownloadManager {
 
     WS_DOWNLOAD_BASE = '/app/download';
+    SSE_DOWNLOADING = '/api/task/downloadManager/downloading';
 
     constructor(ngstomp, $http) {
         "ngInject";
         this.$http = $http;
         this.ngstomp = ngstomp;
+
+
+        this.downloading$ = Rx.DOM.fromEventSource(this.SSE_DOWNLOADING).map(v => JSON.parse(v));
     }
 
     download(item) {

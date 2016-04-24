@@ -6,11 +6,13 @@ import lan.dk.podcastserver.manager.worker.downloader.Downloader;
 import lan.dk.podcastserver.manager.worker.selector.DownloaderSelector;
 import lan.dk.podcastserver.repository.ItemRepository;
 import lan.dk.podcastserver.service.PodcastServerParameters;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
+import rx.subjects.ReplaySubject;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -42,6 +44,9 @@ public class ItemDownloadManager {
     private AtomicInteger numberOfCurrentDownload = new AtomicInteger(0);
     private AtomicBoolean isRunning = new AtomicBoolean(false);
     private Integer limitParallelDownload = 3;
+
+    @Getter
+    private ReplaySubject<Item> downloadings$ = ReplaySubject.createWithSize(0);
 
     /* GETTER & SETTER */
     public int getLimitParallelDownload() {

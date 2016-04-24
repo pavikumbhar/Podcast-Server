@@ -167,6 +167,8 @@ public abstract class AbstractDownloader implements Runnable, Downloader {
     void convertAndSaveBroadcast() {
         template.convertAndSend(WS_TOPIC_DOWNLOAD, item);
         template.convertAndSend(String.format(WS_TOPIC_PODCAST, item.getPodcast().getId()), item);
+
+        itemDownloadManager.getDownloadings$().onNext(item);
     }
 
     public String getItemUrl(Item item) {
