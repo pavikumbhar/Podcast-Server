@@ -40,16 +40,24 @@ export default class ItemDetailCtrl {
     $onInit() {
         this.item.podcast = this.podcast;
 
-        this.DonwloadManager
-            .ngstomp
-                .subscribeTo(`/topic/podcast/${this.item.podcast.id}`).withBodyInJson().bindTo(this.$scope)
-                .callback(m => this.attachNewDataToItem(m.body))
-            .connect();
+        this.itemSub = this.DonwloadManager
+            .downloading$
+            .do(x => console.log(`Before filter with ${x.progression} from ${x.id}`))
+            .filter(i => i.id === this.item.id)
+            .do(x => console.log(`After filter with ${x.progression} from ${x.id}`))
+            .subscribe(
+                item => this.$scope.$evalAsync(() => Object.assign(this.item, item)),
+                e => {try{ console.error(e) } catch(e) {}}
+            );
     }
 
-    attachNewDataToItem(item) {
-        if (item.id == this.item.id) { Object.assign(this.item, item); }
+    $onDestroy() {
+        this.itemSub.dispose();
     }
+
+    /*attachNewDataToItem(item) {
+        if (item.id == this.item.id) { Object.assign(this.item, item); }
+    }*/
 
     download() {
         return this.itemService.download(this.item);

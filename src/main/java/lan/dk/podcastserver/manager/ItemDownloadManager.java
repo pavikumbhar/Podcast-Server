@@ -45,8 +45,9 @@ public class ItemDownloadManager {
     private AtomicBoolean isRunning = new AtomicBoolean(false);
     private Integer limitParallelDownload = 3;
 
-    @Getter
-    private ReplaySubject<Item> downloadings$ = ReplaySubject.createWithSize(0);
+
+    private @Getter ReplaySubject<Item> downloadings$ = ReplaySubject.createWithSize(1);
+    private @Getter ReplaySubject<Collection<Item>> waiting$ = ReplaySubject.createWithSize(0);
 
     /* GETTER & SETTER */
     public int getLimitParallelDownload() {
@@ -257,6 +258,7 @@ public class ItemDownloadManager {
 
     protected void convertAndSendWaitingQueue() {
         this.template.convertAndSend(WS_TOPIC_WAITINGLIST, this.waitingQueue);
+        this.getWaiting$().onNext(waitingQueue);
     }
 
 
@@ -296,6 +298,7 @@ public class ItemDownloadManager {
     }
 
     public void sendProgression(Item item){
+        log.info("Send of progression for item " + item.getId() + " with progression " + item.getProgression());
         this.downloadings$.onNext(item);
     }
     

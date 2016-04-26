@@ -11,6 +11,7 @@ export default class DownloadManager {
 
     WS_DOWNLOAD_BASE = '/app/download';
     SSE_DOWNLOADING = '/api/task/downloadManager/downloading';
+    SSE_WAITING = '/api/task/downloadManager/queue';
 
     constructor(ngstomp, $http) {
         "ngInject";
@@ -19,8 +20,17 @@ export default class DownloadManager {
 
 
         this.downloading$ = Rx.DOM.fromEventSource(this.SSE_DOWNLOADING).map(v => JSON.parse(v));
+        this.waiting$ = Rx.DOM.fromEventSource(this.SSE_WAITING).map(v => JSON.parse(v));
     }
 
+    downloadingList() {
+        return this.$http.get('/api/task/downloadManager/downloading/list').then(r => r.data);
+    }
+
+    waitingItems() {
+        return this.$http.get('/api/task/downloadManager/queue/list').then(r => r.data);
+    }
+    
     download(item) {
         return this.$http.get(`/api/item/${item.id}/addtoqueue`);
     }

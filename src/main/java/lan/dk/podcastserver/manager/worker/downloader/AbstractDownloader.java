@@ -65,6 +65,7 @@ public abstract class AbstractDownloader implements Runnable, Downloader {
         stopDownloading.set(false);
         saveSyncWithPodcast();
         convertAndSaveBroadcast();
+        //itemDownloadManager.sendProgression(item);
         download();
     }
 

@@ -16,11 +16,15 @@ import template from './download.html!text';
     as : 'dc',
     template : template,
 
-    path : '/download'
+    path : '/download',
+    resolve : {
+        items : DonwloadManager => { "ngInject"; return DonwloadManager.downloadingList(); },
+        waitingItems : DonwloadManager => { "ngInject"; return DonwloadManager.waitingItems(); }
+    }
 })
 export default class DownloadCtrl {
 
-    waitingitems = [];
+    waitingItems = [];
     numberOfSimDl = 0;
     items = [];
 
@@ -34,29 +38,18 @@ export default class DownloadCtrl {
     $onInit() {
         this.DonwloadManager.getNumberOfSimDl().then(v => { this.numberOfSimDl = parseInt(v); });
 
-        /** Websocket Connection */
-        /*this.DonwloadManager
-            .ngstomp
-                .subscribeTo('/app/download').withBodyInJson().bindTo(this.$scope)
-                .callback(m => this.items = m.body)
-            .and()
-                .subscribeTo('/app/waiting').withBodyInJson().bindTo(this.$scope)
-                .callback(m => this.waitingitems = m.body)
-            .and()
-                .subscribeTo('/topic/download').withBodyInJson().bindTo(this.$scope)
-                .callback(m => this.onDownloadUpdate(m.body))
-            .and()
-                .subscribeTo('/topic/waiting').withBodyInJson().bindTo(this.$scope)
-                .callback(m => this.waitingitems = m.body)
-            .connect();*/
-
         this.downloadingSub = this.DonwloadManager
-            .downloading$.subscribe(m => this.$scope.$evalAsync(() => this.onDownloadUpdate(m)));
+            .downloading$
+            .subscribe(m => this.$scope.$evalAsync(() => this.onDownloadUpdate(m)));
+
+        this.waitingSub = this.DonwloadManager
+            .waiting$
+            .subscribe(m => this.$scope.$evalAsync(() => this.waitingItems = m));
     }
 
     $onDestroy() {
-        console.log('Destroy');
         this.downloadingSub.dispose();
+        this.waitingSub.dispose();
     }
 
     onDownloadUpdate(item) {

@@ -5,8 +5,6 @@ import lan.dk.podcastserver.manager.ItemDownloadManager;
 import lan.dk.podcastserver.utils.form.MovingItemInQueueForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +14,7 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -33,20 +32,32 @@ public class IDMController {
 
     private final ItemDownloadManager IDM;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @RequestMapping(value="/queue", method = RequestMethod.GET)
-    public Queue<Item> getDownloadList () {
+    @RequestMapping(value="/queue/list", method = RequestMethod.GET)
+    public Queue<Item> getQueueList () {
         return IDM.getWaitingQueue();
     }
 
+    @RequestMapping(value="/queue", method = RequestMethod.GET)
+    public SseEmitter getQueue () {
+        final SseEmitter sseEmitter = new SseEmitter(A_DAY);
+
+        Action1<Collection<Item>> publisher = publish(sseEmitter);
+
+        Subscription subscribe = IDM.getWaiting$()
+                .subscribe(publisher, sseEmitter::completeWithError, sseEmitter::complete);
+
+        sseEmitter.onTimeout(subscribe::unsubscribe);
+
+        return sseEmitter;
+    }
+
     @RequestMapping(value="/downloading/list", method = RequestMethod.GET)
-    public Set<Item> currentlyDownloading() {
+    public Set<Item> getDownloadingList() {
         return IDM.getDownloadingQueue().keySet();
     }
 
     @RequestMapping(value="/downloading", method = RequestMethod.GET)
-    public SseEmitter getDownloadingList () {
+    public SseEmitter getDownloading () {
         final SseEmitter sseEmitter = new SseEmitter(A_DAY);
 
         Action1<Item> publisher = publish(sseEmitter);
@@ -60,7 +71,10 @@ public class IDMController {
     }
 
     private <U> Action1<U> publish(SseEmitter sseEmitter) {
-        return v -> { try { sseEmitter.send(v, MediaType.APPLICATION_JSON); } catch (IOException ignored) {} };
+        return v -> { try {
+            log.debug("Send data to a request");
+            sseEmitter.send(v, MediaType.APPLICATION_JSON);
+        } catch (IOException ignored) {} };
     }
 
     @RequestMapping(value="/downloading/{id}", method = RequestMethod.GET)
@@ -92,7 +106,7 @@ public class IDMController {
 
     @RequestMapping(value="/downloading/{id}", method = RequestMethod.POST)
     public void changeStatusDownload (@RequestBody String status, @PathVariable(value = "id") int id) {
-        logger.debug("id : " + id + "; status : " + status);
+        log.debug("id : " + id + "; status : " + status);
     }
 
     // Action on ALL download :
