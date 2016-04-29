@@ -47,6 +47,7 @@ public class IDMController {
                 .subscribe(publisher, sseEmitter::completeWithError, sseEmitter::complete);
 
         sseEmitter.onTimeout(subscribe::unsubscribe);
+        sseEmitter.onCompletion(subscribe::unsubscribe);
 
         return sseEmitter;
     }
@@ -66,6 +67,11 @@ public class IDMController {
                 .subscribe(publisher, sseEmitter::completeWithError, sseEmitter::complete);
 
         sseEmitter.onTimeout(subscribe::unsubscribe);
+        sseEmitter.onCompletion(() -> {
+            log.info("OnCompletion");
+            sseEmitter.complete();
+            subscribe.unsubscribe();
+        });
 
         return sseEmitter;
     }

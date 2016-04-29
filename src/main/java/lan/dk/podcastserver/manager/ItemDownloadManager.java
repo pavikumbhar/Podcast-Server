@@ -11,11 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 import rx.subjects.ReplaySubject;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +29,6 @@ import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
-@Transactional
 public class ItemDownloadManager {
 
     private static final String WS_TOPIC_WAITINGLIST = "/topic/waiting";
@@ -45,9 +44,8 @@ public class ItemDownloadManager {
     private AtomicBoolean isRunning = new AtomicBoolean(false);
     private Integer limitParallelDownload = 3;
 
-
-    private @Getter ReplaySubject<Item> downloadings$ = ReplaySubject.createWithSize(1);
-    private @Getter ReplaySubject<Collection<Item>> waiting$ = ReplaySubject.createWithSize(0);
+    private @Getter ReplaySubject<Item> downloadings$ = ReplaySubject.create(0);
+    private @Getter ReplaySubject<Collection<Item>> waiting$ = ReplaySubject.create(0);
 
     /* GETTER & SETTER */
     public int getLimitParallelDownload() {
@@ -184,6 +182,7 @@ public class ItemDownloadManager {
         manageDownload();
     }
 
+    @Transactional
     public void removeItemFromQueue(UUID id, Boolean stopItem) {
         Item item = itemRepository.findOne(id);
         this.removeItemFromQueue(item);

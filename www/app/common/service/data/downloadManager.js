@@ -19,8 +19,8 @@ export default class DownloadManager {
         this.ngstomp = ngstomp;
 
 
-        this.downloading$ = Rx.DOM.fromEventSource(this.SSE_DOWNLOADING).map(v => JSON.parse(v));
-        this.waiting$ = Rx.DOM.fromEventSource(this.SSE_WAITING).map(v => JSON.parse(v));
+        this.downloading$ = Rx.DOM.fromEventSource(this.SSE_DOWNLOADING).map(v => JSON.parse(v)).share();
+        this.waiting$ = Rx.DOM.fromEventSource(this.SSE_WAITING).map(v => JSON.parse(v)).share();
     }
 
     downloadingList() {

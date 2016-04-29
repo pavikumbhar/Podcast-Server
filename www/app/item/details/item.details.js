@@ -42,13 +42,8 @@ export default class ItemDetailCtrl {
 
         this.itemSub = this.DonwloadManager
             .downloading$
-            .do(x => console.log(`Before filter with ${x.progression} from ${x.id}`))
             .filter(i => i.id === this.item.id)
-            .do(x => console.log(`After filter with ${x.progression} from ${x.id}`))
-            .subscribe(
-                item => this.$scope.$evalAsync(() => Object.assign(this.item, item)),
-                e => {try{ console.error(e) } catch(e) {}}
-            );
+            .subscribe( item => this.$scope.$evalAsync(() => Object.assign(this.item, item)) );
     }
 
     $onDestroy() {
