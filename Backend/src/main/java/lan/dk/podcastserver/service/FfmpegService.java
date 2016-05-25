@@ -33,17 +33,21 @@ public class FfmpegService {
     @Autowired ProcessBuilderFactory processBuilderFactory;
 
     public void concatDemux (File target, File... files) {
+        concatDemux(target.toPath(), Lists.newArrayList(files).stream().map(File::toPath).toArray(Path[]::new));
+    }
+
+    public void concatDemux (Path target, Path... files) {
         Path listOfFiles = null;
         try {
-            Files.deleteIfExists(target.toPath());
+            Files.deleteIfExists(target);
 
             String filesStrings = Lists.newArrayList(files)
                     .stream()
-                    .map(File::getName)
+                    .map(f -> f.getFileName().toString())
                     .map(p -> "file '" + p + "'")
                     .collect(joining(System.getProperty("line.separator")));
 
-            listOfFiles = Files.createTempFile(target.toPath().getParent(), "ffmpeg-list", ".txt");
+            listOfFiles = Files.createTempFile(target.getParent(), "ffmpeg-list", ".txt");
             Files.write(listOfFiles, filesStrings.getBytes());
 
             ProcessBuilder pb = processBuilderFactory.newProcessBuilder(ffmpeg,
@@ -52,7 +56,7 @@ public class FfmpegService {
                     "-i", listOfFiles.toAbsolutePath().toString(),
                     "-vcodec", "copy",
                     "-acodec", "copy",
-                    target.getAbsolutePath()
+                    target.toAbsolutePath().toString()
             )
                     .directory(workingDirectory.toFile())
                     .redirectErrorStream(true)
